@@ -13,7 +13,7 @@ public class MobileService {
 	@Autowired
 	private MobileNumDAO mobileNumDAO;
 	public boolean checkMobileNumber(String mobileNumber){
-		MobileNumberData mobileData = mobileNumDAO.findMobileDetailsByMobileNumber(mobileNumber);
+		MobileNumberData mobileData = retrieveUserData(mobileNumber);
 		if(mobileData != null && mobileData.getMobileNumber() != null){
 		System.out.println("Fetched Data: " + mobileData.getMobileNumber());
 			return true;
@@ -21,12 +21,12 @@ public class MobileService {
 		return false;
 	}
 	
-	public void addMobileNum(String string) {
-		MobileNumberData data = new MobileNumberData();
-		data.setMobileNumber(string);
-		mobileNumDAO.saveAndFlush(data);
+	public void addMobileNumData(MobileNumberData data) {
+		mobileNumDAO.save(data);
 	}
 	
-	
+	public MobileNumberData retrieveUserData(String mobileNumber){
+		return mobileNumDAO.findMobileDetailsByMobileNumber(mobileNumber);
+	}
 	
 }

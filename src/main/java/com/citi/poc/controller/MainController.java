@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.citi.poc.model.MobileNumberData;
+import com.citi.poc.model.Offers;
 import com.citi.poc.service.MobileService;
 
 @Controller
@@ -21,11 +22,19 @@ public class MainController {
 		return "Welcome to Mobile Number Page";
 	}
 	
-	@RequestMapping("/AddDummyData")
-	public @ResponseBody String addMobileNum(){
-		mobileService.addMobileNum("123456789");
-		return "Data is added";
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value="saveMobileNumber")
+	public String addMobileNumDeatails(Model model,MobileNumberData mobileNumberData){
+		System.out.println(" data1: " + mobileNumberData.getMobileNumber());
+		System.out.println(" data2: " + mobileNumberData.getFirstName());
+		mobileService.addMobileNumData(mobileNumberData);
+		model.addAttribute("message" , "Data is successfully Added");
+		model.addAttribute("mobileNumModel", new MobileNumberData());
+		return "MobileNum";
 	}
+	
+	
 	
 	@RequestMapping("checkMobileNumber")
 	public String checkMobileNumGet(Model model){
@@ -35,7 +44,25 @@ public class MainController {
 	
 	@RequestMapping(method = RequestMethod.POST, value="checkMobileNumber")
 	public String checkMobileNumPost(Model model, MobileNumberData mobileNumberData){
-		System.out.println("Entered data: " + mobileNumberData.getMobileNumber());
-		return mobileService.checkMobileNumber(mobileNumberData.getMobileNumber())?"Recharge":"Registration";
+		String mobileNumber = mobileNumberData.getMobileNumber();
+		System.out.println("Entered data: " + mobileNumber);
+		String targetPage = mobileService.checkMobileNumber(mobileNumber)?"Recharge":"Registration";
+		if("Recharge".equals(targetPage)){
+			mobileNumberData =  mobileService.retrieveUserData(mobileNumber);
+			Offers offers = new Offers();
+			offers.setMobileNumber(mobileNumberData.getMobileNumber());
+			offers.setOfferAmount(10L);
+			model.addAttribute("offers", offers);
+		}
+		model.addAttribute("mobileNumModel", mobileNumberData);
+		return targetPage;
+	}
+	
+	@RequestMapping("/AddDummyOffers")
+	public @ResponseBody String dummyOffers(){
+		Offers offers = new Offers();
+		offers.setMobileNumber("123456789");
+		offers.setOfferAmount(50L);
+		return "Offers are added";
 	}
 }

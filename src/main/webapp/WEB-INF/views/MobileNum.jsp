@@ -8,9 +8,10 @@
 <title>Mobile Number</title>
 </head>
 <body id="login-bg">
+	<h2>${message}</h2>
 	<form:form modelAttribute="mobileNumModel" action="checkMobileNumber"
 		method="post">
-		<form:input type="text" path="mobileNumber" />
+		Mobile Number:<form:input type="text" path="mobileNumber" />
 		<input type="submit" class="submit-login" value="Next"/>
 	</form:form>
 </body>
