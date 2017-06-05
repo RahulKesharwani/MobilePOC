@@ -3,8 +3,10 @@ package com.citi.poc.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.citi.poc.model.MobileNumberData;
@@ -48,11 +50,7 @@ public class MainController {
 		System.out.println("Entered data: " + mobileNumber);
 		String targetPage = mobileService.checkMobileNumber(mobileNumber)?"Recharge":"Registration";
 		if("Recharge".equals(targetPage)){
-			mobileNumberData =  mobileService.retrieveUserData(mobileNumber);
-			Offers offers = new Offers();
-			offers.setMobileNumber(mobileNumberData.getMobileNumber());
-			offers.setOfferAmount(10L);
-			model.addAttribute("offers", offers);
+			model.addAttribute("mobileNum", mobileNumberData.getMobileNumber());
 		}
 		model.addAttribute("mobileNumModel", mobileNumberData);
 		return targetPage;
@@ -65,4 +63,23 @@ public class MainController {
 		offers.setOfferAmount(50L);
 		return "Offers are added";
 	}
+	
+	@RequestMapping(value="/checkOffers", method=RequestMethod.POST)
+	public @ResponseBody Offers checkOffersPerMNumpber(@RequestParam("") String mobileNumber){
+		return mobileService.retrieveOffers(mobileNumber);
+		//return "Recharge";
+	}
+	
+	@RequestMapping(value="/RechargeMobileNum", method=RequestMethod.POST)
+	public @ResponseBody String rechargeMobileNumber(@RequestParam("rechargeAmt") String rechargeAmt, @RequestParam("mobileNum") String mobileNum){
+		if(StringUtils.isEmpty(rechargeAmt)){
+			return "Please enter some amount";
+		}
+		System.out.println(rechargeAmt);
+		Long rechargeAmount = Long.parseLong(rechargeAmt);
+		rechargeAmount=rechargeAmount-2;
+		mobileService.updateTotalCreditedAmout(mobileNum, rechargeAmount);
+		return "Recharge Successful";
+	}
+	
 }

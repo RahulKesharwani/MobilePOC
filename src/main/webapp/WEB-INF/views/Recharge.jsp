@@ -8,17 +8,16 @@
 <title>Recharge</title>
 </head>
 <body>
-<h1>Please recharge your phone number</h1>
+	<h1>Please recharge your phone number</h1>
 
-<form:form modelAttribute="mobileNumModel" action="saveMobileNumber"
-		method="post">
-		
-		Recharge Amount:<form:input type="text" path="rechargeAmt" />
-		<input type="button"  value="Offers" onclick="" />
-		<br></br>
-		
+	<form name="chckOffers"	action="RechargeMobileNum" method="post">
+		Entered Mobile Number: <input type="text" name="mobileNum" value="${mobileNum}" readonly="readonly" />
+		<br>
+		<label>Recharge Amount:</label><input type="text" name="rechargeAmt" />
+		<input type="button" value="Offers" name="btnChckOffer" class="btn">
+
 		<input type="submit" class="submit-login" value="Recharge" />
-	</form:form>
-	
+	</form>
+
 </body>
 </html>
