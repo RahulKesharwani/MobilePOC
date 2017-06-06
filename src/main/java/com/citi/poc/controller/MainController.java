@@ -56,30 +56,54 @@ public class MainController {
 		return targetPage;
 	}
 	
-	@RequestMapping("/AddDummyOffers")
-	public @ResponseBody String dummyOffers(){
-		Offers offers = new Offers();
-		offers.setMobileNumber("123456789");
-		offers.setOfferAmount(50L);
-		return "Offers are added";
+	@RequestMapping("/AddOffers")
+	public String addOffers(){
+		return "AddOffers";
 	}
 	
-	@RequestMapping(value="/checkOffers", method=RequestMethod.POST)
-	public @ResponseBody Offers checkOffersPerMNumpber(@RequestParam("") String mobileNumber){
-		return mobileService.retrieveOffers(mobileNumber);
-		//return "Recharge";
+	@RequestMapping(value="/AddOffers", method=RequestMethod.POST )
+	public String addPostOffers(@RequestParam("offerAmt") String offerAmount, @RequestParam("mobileNum") String mobileNum){
+		Offers offers = new Offers();
+		offers.setMobileNumber(mobileNum);
+		offers.setOfferAmount(Long.parseLong(offerAmount));
+		mobileService.saveOffers(offers);
+		return "AddOffers";
+	}
+	
+	@RequestMapping(value="/totalCredited", method=RequestMethod.POST )
+	public String addPostOffers(@RequestParam("mobileNum") String mobileNum, Model model){
+		Long totalAmt = mobileService.retrieveTotalCreditedAmount(mobileNum);
+		if(totalAmt == -1L){
+			model.addAttribute("totalAmt", "There is no credited amount");
+		}else{
+			model.addAttribute("totalAmt", totalAmt);
+		}
+		model.addAttribute("mobileNum", mobileNum);
+		return "Recharge";
 	}
 	
 	@RequestMapping(value="/RechargeMobileNum", method=RequestMethod.POST)
-	public @ResponseBody String rechargeMobileNumber(@RequestParam("rechargeAmt") String rechargeAmt, @RequestParam("mobileNum") String mobileNum){
+	public String rechargeMobileNumber(Model model, @RequestParam("rechargeAmt") String rechargeAmt, @RequestParam("mobileNum") String mobileNum){
 		if(StringUtils.isEmpty(rechargeAmt)){
-			return "Please enter some amount";
+			model.addAttribute("errorAmountMsg", "Please enter some amount");
+			model.addAttribute(mobileNum);
+			return "Recharge";
 		}
 		System.out.println(rechargeAmt);
 		Long rechargeAmount = Long.parseLong(rechargeAmt);
+		
+		Offers offers = mobileService.retrieveOffers(mobileNum);
+		if(offers!=null){
+			
+			rechargeAmount = rechargeAmount+offers.getOfferAmount();
+			
+		}
+		else{
 		rechargeAmount=rechargeAmount-2;
+		}
 		mobileService.updateTotalCreditedAmout(mobileNum, rechargeAmount);
-		return "Recharge Successful";
+		model.addAttribute(mobileNum);
+		return "SuccessRecharge";
 	}
 	
 }

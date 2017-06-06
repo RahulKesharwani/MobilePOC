@@ -8,16 +8,26 @@
 <title>Recharge</title>
 </head>
 <body>
+
 	<h1>Please recharge your phone number</h1>
 
 	<form name="chckOffers"	action="RechargeMobileNum" method="post">
 		Entered Mobile Number: <input type="text" name="mobileNum" value="${mobileNum}" readonly="readonly" />
 		<br>
 		<label>Recharge Amount:</label><input type="text" name="rechargeAmt" />
-		<input type="button" value="Offers" name="btnChckOffer" class="btn">
-
+		<br></br>
 		<input type="submit" class="submit-login" value="Recharge" />
+		<br>
 	</form>
-
+	<br/>	
+	<form name="totalCredit" action="totalCredited" method="post">
+		<input type="hidden"  name="mobileNum" value="${mobileNum}">
+		<label>Click here to check total Credited Amount for this mobile number : </label> <label>${totalAmt}</label> 
+		<br></br>
+		<input type="submit" value="Find Total Credited Amount"> 
+	</form>
+		
+	<br>
+	<label>Click here to Add Offers for this mobile number : </label> <a href="AddOffers" >Add Offers</a>	
 </body>
 </html>

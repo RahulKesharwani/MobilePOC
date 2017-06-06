@@ -38,8 +38,16 @@ public class MobileService {
 		return mobileNumDAO.findMobileDetailsByMobileNumber(mobileNumber);
 	}
 	
-	public Offers retrieveOffers(String mobileNumber){
-		return offersDAO.findOffersByMobileNumber(mobileNumber);
+	public Offers retrieveOffers(String mobileNum){
+		return offersDAO.findOffersByMobileNumber(mobileNum);
+	}
+	
+	public Long retrieveTotalCreditedAmount(String mobileNum){
+		BillingDetails billingDetails = billingDAO.findBillingDetailsByMobileNumber(mobileNum);
+		if( billingDetails != null ){
+			return billingDetails.getTotalCredited();
+		}		
+		return -1L;
 	}
 	
 	public void updateTotalCreditedAmout(String mobileNum, Long totalAmout){
@@ -53,5 +61,9 @@ public class MobileService {
 			billingDetails.setTotalCredited(totalAmout);
 		}
 		billingDAO.save(billingDetails);
+	}
+	
+	public void saveOffers(Offers offers){
+		offersDAO.save(offers);
 	}
 }
